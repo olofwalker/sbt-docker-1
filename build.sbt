@@ -11,15 +11,10 @@ lazy val root = (project in file("."))
     scriptedBufferLog := false,
     sbtPlugin := true,
     crossScalaVersions := Vector(scalaVersion.value),
-    //resolvers += Resolver.url("lightbend-oss", url("https://api.bintray.com/lightbend/cloudflow"))(Resolver.ivyStylePatterns),
     publishMavenStyle := false,
     organization := "com.lightbend.cloudflow",
     bintrayOrganization := Some("lightbend"),
     bintrayRepository := "cloudflow",
-//    resolvers += Resolver.bintrayRepo("lightbend", "maven"),
-    publishTo := Some(
-      Resolver.bintrayIvyRepo("lightbend", "cloudflow")
-    ),
     publishConfiguration := publishConfiguration.value.withOverwrite(true),
     libraryDependencies ++=
       Seq(
