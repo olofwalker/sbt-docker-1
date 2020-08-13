@@ -1,44 +1,33 @@
-name := "sbt-docker"
-organization := "se.marcuslonnberg"
-organizationHomepage := Some(url("https://github.com/marcuslonnberg"))
+val ScalaVersion = "2.12"
 
 lazy val root = (project in file("."))
-  .enablePlugins(SbtPlugin)
+  .enablePlugins(SbtPlugin, BintrayPlugin)
   .settings(
-    scriptedLaunchOpts := { scriptedLaunchOpts.value ++
-      Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
+    name := "sbt-docker",
+    scriptedLaunchOpts := {
+      scriptedLaunchOpts.value ++
+        Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
     },
-    scriptedBufferLog := false
+    scriptedBufferLog := false,
+    sbtPlugin := true,
+    crossScalaVersions := Vector(scalaVersion.value),
+    //resolvers += Resolver.url("lightbend-oss", url("https://api.bintray.com/lightbend/cloudflow"))(Resolver.ivyStylePatterns),
+    publishMavenStyle := false,
+    organization := "com.lightbend.cloudflow",
+    bintrayOrganization := Some("lightbend"),
+    bintrayRepository := "cloudflow",
+//    resolvers += Resolver.bintrayRepo("lightbend", "maven"),
+    publishTo := Some(
+      Resolver.bintrayIvyRepo("lightbend", "cloudflow")
+    ),
+    publishConfiguration := publishConfiguration.value.withOverwrite(true),
+    libraryDependencies ++=
+      Seq(
+        "org.scalatest" %% "scalatest" % "3.2.0" % "test",
+        "org.apache.commons" % "commons-lang3" % "3.10"
+      ),
+    scalacOptions := Seq("-deprecation", "-unchecked", "-feature"),
+    licenses := Seq("MIT License" -> url("https://github.com/marcuslonnberg/sbt-docker/blob/master/LICENSE")),
+    homepage := Some(url("https://github.com/marcuslonnberg/sbt-docker")),
+    scmInfo := Some(ScmInfo(url("https://github.com/marcuslonnberg/sbt-docker"), "scm:git:git://github.com:marcuslonnberg/sbt-docker.git"))
   )
-
-libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.2.0" % "test",
-  "org.apache.commons" % "commons-lang3" % "3.10"
-)
-
-scalacOptions := Seq("-deprecation", "-unchecked", "-feature")
-
-licenses := Seq("MIT License" -> url("https://github.com/marcuslonnberg/sbt-docker/blob/master/LICENSE"))
-homepage := Some(url("https://github.com/marcuslonnberg/sbt-docker"))
-scmInfo := Some(ScmInfo(url("https://github.com/marcuslonnberg/sbt-docker"), "scm:git:git://github.com:marcuslonnberg/sbt-docker.git"))
-
-publishMavenStyle := true
-publishTo := {
-  val nexus = "https://oss.sonatype.org/"
-  if (isSnapshot.value)
-    Some("snapshots" at nexus + "content/repositories/snapshots")
-  else
-    Some("releases" at nexus + "service/local/staging/deploy/maven2")
-}
-
-pomIncludeRepository := { _ => false}
-
-pomExtra := {
-  <developers>
-    <developer>
-      <id>marcuslonnberg</id>
-      <name>Marcus Lönnberg</name>
-      <url>http://marcuslonnberg.se</url>
-    </developer>
-  </developers>
-}
